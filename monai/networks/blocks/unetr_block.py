@@ -120,7 +120,13 @@ class UnetrPrUpBlock(nn.Module):
         """
 
         super().__init__()
-
+        if isinstance(upsample_kernel_size[0],list):
+            multi_upsample_kernel_size=True
+            upsample_kernel_sizes=upsample_kernel_size
+            upsample_kernel_size=upsample_kernel_sizes[-1]
+        else:
+            multi_upsample_kernel_size=False
+        self.output_channels=out_channels
         upsample_stride = upsample_kernel_size
         self.transp_conv_init = get_conv_layer(
             spatial_dims,
@@ -140,7 +146,7 @@ class UnetrPrUpBlock(nn.Module):
                                 spatial_dims,
                                 out_channels,
                                 out_channels,
-                                kernel_size=upsample_kernel_size,
+                                kernel_size=upsample_kernel_size if not multi_upsample_kernel_size else upsample_kernel_sizes[-2-i],
                                 stride=upsample_stride,
                                 conv_only=True,
                                 is_transposed=True,
@@ -165,7 +171,7 @@ class UnetrPrUpBlock(nn.Module):
                                 spatial_dims,
                                 out_channels,
                                 out_channels,
-                                kernel_size=upsample_kernel_size,
+                                kernel_size=upsample_kernel_size if not multi_upsample_kernel_size else upsample_kernel_sizes[-2-i],
                                 stride=upsample_stride,
                                 conv_only=True,
                                 is_transposed=True,
@@ -189,7 +195,7 @@ class UnetrPrUpBlock(nn.Module):
                         spatial_dims,
                         out_channels,
                         out_channels,
-                        kernel_size=upsample_kernel_size,
+                        kernel_size=upsample_kernel_size if not multi_upsample_kernel_size else upsample_kernel_sizes[-2-i],
                         stride=upsample_stride,
                         conv_only=True,
                         is_transposed=True,
